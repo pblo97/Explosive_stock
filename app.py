@@ -7,13 +7,43 @@ import streamlit as st
 import pandas as pd
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
-import config
 from modules.screener import PennyStockScreener
 from modules.fmp_api import FMPClient
 from utils.helpers import (
     format_number, format_volume, format_percent,
     get_signal_emoji, get_trend_emoji, color_score
 )
+
+# Load config from secrets (Streamlit Cloud) or local config.py
+try:
+    # Try Streamlit secrets first (for cloud deployment)
+    FMP_API_KEY = st.secrets.get("FMP_API_KEY", "")
+    MIN_PRICE = st.secrets.get("MIN_PRICE", 0.50)
+    MAX_PRICE = st.secrets.get("MAX_PRICE", 10.0)
+    MAX_MARKET_CAP = st.secrets.get("MAX_MARKET_CAP", 300000000)
+    MIN_VOLUME = st.secrets.get("MIN_VOLUME", 100000)
+    HIGH_SCORE_THRESHOLD = st.secrets.get("HIGH_SCORE_THRESHOLD", 70)
+    MEDIUM_SCORE_THRESHOLD = st.secrets.get("MEDIUM_SCORE_THRESHOLD", 50)
+except:
+    # Fall back to local config.py for local development
+    try:
+        import config
+        FMP_API_KEY = config.FMP_API_KEY
+        MIN_PRICE = config.MIN_PRICE
+        MAX_PRICE = config.MAX_PRICE
+        MAX_MARKET_CAP = config.MAX_MARKET_CAP
+        MIN_VOLUME = config.MIN_VOLUME
+        HIGH_SCORE_THRESHOLD = config.HIGH_SCORE_THRESHOLD
+        MEDIUM_SCORE_THRESHOLD = config.MEDIUM_SCORE_THRESHOLD
+    except ImportError:
+        # Default values if neither exists
+        FMP_API_KEY = ""
+        MIN_PRICE = 0.50
+        MAX_PRICE = 10.0
+        MAX_MARKET_CAP = 300000000
+        MIN_VOLUME = 100000
+        HIGH_SCORE_THRESHOLD = 70
+        MEDIUM_SCORE_THRESHOLD = 50
 
 # Page config
 st.set_page_config(
@@ -203,7 +233,7 @@ def main():
 
         api_key = st.text_input(
             "FMP API Key",
-            value=config.FMP_API_KEY,
+            value=FMP_API_KEY,
             type="password",
             help="Get your API key from financialmodelingprep.com"
         )

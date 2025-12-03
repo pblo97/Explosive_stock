@@ -9,7 +9,6 @@ import time
 from modules.fmp_api import FMPClient
 from modules.indicators import TechnicalIndicators
 from modules.scorer import StockScorer
-import config
 
 
 class PennyStockScreener:
@@ -19,6 +18,11 @@ class PennyStockScreener:
         self.client = FMPClient(api_key)
         self.indicators = TechnicalIndicators()
         self.scorer = StockScorer()
+        # Default screening parameters
+        self.min_price = 0.50
+        self.max_price = 10.0
+        self.min_volume = 100000
+        self.max_market_cap = 300000000
 
     def get_candidate_stocks(self, exchange: str = None) -> pd.DataFrame:
         """
@@ -32,10 +36,10 @@ class PennyStockScreener:
         print("🔍 Scanning for penny stock candidates...")
 
         df = self.client.get_stock_screener(
-            min_price=config.MIN_PRICE,
-            max_price=config.MAX_PRICE,
-            min_volume=config.MIN_VOLUME,
-            max_market_cap=config.MAX_MARKET_CAP,
+            min_price=self.min_price,
+            max_price=self.max_price,
+            min_volume=self.min_volume,
+            max_market_cap=self.max_market_cap,
             exchange=exchange
         )
 

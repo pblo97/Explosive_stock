@@ -4,7 +4,6 @@ Evidence-based scoring for penny stock explosive potential
 """
 
 from typing import Dict
-import config
 
 
 class StockScorer:
@@ -214,9 +213,9 @@ class StockScorer:
 
         Returns: 'STRONG', 'MODERATE', 'WEAK', or 'AVOID'
         """
-        if score >= config.HIGH_SCORE_THRESHOLD:
+        if score >= 70:  # HIGH_SCORE_THRESHOLD
             return 'STRONG'
-        elif score >= config.MEDIUM_SCORE_THRESHOLD:
+        elif score >= 50:  # MEDIUM_SCORE_THRESHOLD
             return 'MODERATE'
         elif score >= 30:
             return 'WEAK'
